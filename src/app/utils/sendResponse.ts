@@ -9,6 +9,7 @@ type IMeta = {
 
 type TResponse<T> = {
 	statusCode: number;
+	success: boolean;
 	message: string;
 	meta?: IMeta | null | undefined;
 	data?: T | null | undefined;
@@ -16,7 +17,8 @@ type TResponse<T> = {
 
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {
 	res.status(data.statusCode).json({
-		success: true,
+		success: data.success,
+		statusCode: data.statusCode,
 		message: data.message,
 		meta: data.meta || null || undefined,
 		data: data?.data || null || undefined,
