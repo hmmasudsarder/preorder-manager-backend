@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+model Preorder {
+  id           Int       @id @default(autoincrement())
+  name         String
+  products     Int       @default(1)
+  preorderWhen String // e.g., "out-of-stock" or "regardless-of-stock"
+  startsAt     DateTime
+  endsAt       DateTime?
+  status       Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model User {
+  id                String    @id @default(uuid())
+  fullName          String
+  email             String    @unique
+  password          String
+  profilePic        String?   @default("")
+  passwordChangedAt DateTime?
+  isVerified        Boolean   @default(false)
+  isResetPassword   Boolean   @default(false)
+  canResetPassword  Boolean   @default(false)
+  isResentOtp       Boolean   @default(false)
+  role              UserRole  @default(USER)
+  isSubscribed      Boolean   @default(false)
+  planExpiration    DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  Uploads           Upload[]
+
+  @@map("users")
+}
+
+model Upload {
+  id        String   @id @default(uuid())
+  userId    String
+  imageUrl  String
+  embedding Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("uploads")
+}
+
+enum Interval {
+  week
+  month
+  year
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
